@@ -4,15 +4,18 @@
 //
 //  Created by Zaid Ragab on 2023-04-05.
 //
-
+import Blackbird
 import SwiftUI
 
 struct ListView: View {
+    
     //MARK: stored Properties
     
     //lsit items to completed
-    @State var ToDoItems: [ToDoItem] = exestingToDpItem
-    
+    @BlackbirdLiveModels({ db in
+        try await Todoitem.read(from: db)
+    }) var todoItems
+                         
     @State var newitemDescrption: String = ""
     
     
@@ -23,27 +26,20 @@ struct ListView: View {
             VStack{
                 
                 HStack{
-                    TextField("enter to-do list item", text:$newitemDescrption)
+                    TextField("enter to-do list item", text: $newitemDescrption)
                     
-                    Button(action:{
-                        // get last to do item
-                        let lastId = ToDoItems.last!.id
-                        // create new item
-                        let NewId = lastId + 1
-                        // creat the new to do item
-                        let newtodoitem = ToDoItem(id: NewId, descritption: newitemDescrption,
-                                                   completed: false)
-                        // create new item
-                        ToDoItems.append(newtodoitem)
-                        // clear ipute feild
-                        newitemDescrption = ""
-                        
-                        
-                        
-                        
-                        
-                        
-                        
+                    Button(action: {
+//                        // get last to do item
+//                        let lastId = todoItems.last!.id
+//                        // create new item
+//                        let NewId = lastId + 1
+//                        // creat the new to do item
+//                        let newtodoitem = Todoitem(id: NewId, descritption: newitemDescrption,
+//                                                   completed: false)
+//                        // create new item
+//                        todoItems.append(newtodoitem)
+//                        // clear ipute feild
+//                        newitemDescrption = ""
                         
                         
                     }, label: {
@@ -57,12 +53,14 @@ struct ListView: View {
                 }
                 .padding(20)
                 
-                List(ToDoItems) {currentItem in
+                List(todoItems.results) { currentItem in
                     
-                    Label(title: { Text(currentItem.descritption) }, icon: {if currentItem.completed == true{
-                        
-                        Image( systemName:"checkmark.circle") }
-                        else {
+                    Label(title: {
+                        Text(currentItem.description)
+                    }, icon: {
+                        if currentItem.completed == true {
+                            Image(systemName:"checkmark.circle")
+                        } else {
                             Image(systemName: "circle")
                         }
                     })
@@ -78,5 +76,7 @@ struct ListView: View {
 struct ListView_Previews: PreviewProvider {
     static var previews: some View {
         ListView()
+            .environment(\.blackbirdDatabase, AppDatabase.instance )
+
     }
 }
