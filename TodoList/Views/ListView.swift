@@ -10,12 +10,14 @@ import SwiftUI
 struct ListView: View {
     
     //MARK: stored Properties
+    // Access the connection to the database (needed to add a new record
+    @Environment(\.blackbirdDatabase) var db: Blackbird.Database?
     
     //lsit items to completed
     @BlackbirdLiveModels({ db in
         try await Todoitem.read(from: db)
     }) var todoItems
-                         
+    
     @State var newitemDescrption: String = ""
     
     
@@ -29,17 +31,12 @@ struct ListView: View {
                     TextField("enter to-do list item", text: $newitemDescrption)
                     
                     Button(action: {
-//                        // get last to do item
-//                        let lastId = todoItems.last!.id
-//                        // create new item
-//                        let NewId = lastId + 1
-//                        // creat the new to do item
-//                        let newtodoitem = Todoitem(id: NewId, descritption: newitemDescrption,
-//                                                   completed: false)
-//                        // create new item
-//                        todoItems.append(newtodoitem)
-//                        // clear ipute feild
-//                        newitemDescrption = ""
+                        Task {
+                            try await db!.transaction { core in
+                                try core.query("INSERT INTO Todoitem (descrition) values (?)", newitemDescrption)
+                            }
+                            
+                        }
                         
                         
                     }, label: {
@@ -47,7 +44,7 @@ struct ListView: View {
                             .font(.caption)
                         
                     })
-                
+                    
                     
                     
                 }
@@ -77,6 +74,6 @@ struct ListView_Previews: PreviewProvider {
     static var previews: some View {
         ListView()
             .environment(\.blackbirdDatabase, AppDatabase.instance )
-
+        
     }
 }

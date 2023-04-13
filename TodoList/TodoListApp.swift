@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct TodoListApp: App {
     var body: some Scene {
-        WindowGroup {
+        WindowGroup{
             ListView()
                 .environment(\.blackbirdDatabase, AppDatabase.instance )
         }

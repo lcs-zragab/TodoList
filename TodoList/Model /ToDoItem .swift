@@ -6,24 +6,10 @@
 //
 
 import Foundation
+import Blackbird
 
-struct ToDoItem: Identifiable{
-    var id: Int
-    var descritption: String
-    var completed: Bool
-    
+struct Todoitem: BlackbirdModel {
+    @BlackbirdColumn var id: Int
+    @BlackbirdColumn var description: String
+    @BlackbirdColumn var completed: Bool
 }
-
-var exestingToDpItem = [
-    
-    ToDoItem(id: 1, descritption: "Study for math test", completed: false)
-    
-    ,
-    
-    ToDoItem(id: 2, descritption: "Go to Gym", completed: true)
-    
-    ,
-    
-    ToDoItem(id: 3, descritption: "Take a Nap", completed: true)
-    
-]
